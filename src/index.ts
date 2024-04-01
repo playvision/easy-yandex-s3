@@ -156,7 +156,7 @@ class EasyYandexS3 {
     }
 
     if (debug) this._log('S3', debugObject, 'started');
-    if (debug) this._log('S3', debugObject, 'params:', params);
+    if (debug) this._log('S3', debugObject, 'params: ', params);
 
     try {
       const s3Promise: S3.ManagedUpload.SendData = await new Promise((resolve, reject) => {
