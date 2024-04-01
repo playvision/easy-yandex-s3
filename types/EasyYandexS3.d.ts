@@ -51,7 +51,9 @@ type UploadFilePath = {
   ignore?: DefaultIgnoreList;
 }
 
-type UploadFile = UploadFileBuffer | UploadFilePath;
+type UploadFile = (UploadFileBuffer | UploadFilePath) & {
+  cacheControl?: string;
+};
 
 type DownloadedFile = {
   data: S3.GetObjectOutput;

@@ -102,6 +102,8 @@ class EasyYandexS3 {
     const { debug } = this;
     const debugObject = 'upload';
 
+    if (debug) this._log('S3', debugObject, 'arg:', file);
+
     if (Array.isArray(file)) {
       const files = file;
       if (files.length === 0) throw new Error('file array is empty');
@@ -148,10 +150,13 @@ class EasyYandexS3 {
     const { s3 } = this;
     const { Bucket } = this;
     const ContentType = mime.lookup(fileUploadName) || 'text/plain';
-    const params = { Bucket, Key, Body, ContentType };
+    const params: S3.PutObjectRequest = { Bucket, Key, Body, ContentType };
+    if (file.cacheControl) {
+      params.CacheControl = file.cacheControl;
+    }
 
     if (debug) this._log('S3', debugObject, 'started');
-    if (debug) this._log('S3', debugObject, params);
+    if (debug) this._log('S3', debugObject, 'params:', params);
 
     try {
       const s3Promise: S3.ManagedUpload.SendData = await new Promise((resolve, reject) => {
@@ -211,6 +216,7 @@ class EasyYandexS3 {
 
     const dirContent = ReadDir(dir, dir, ignoreList);
 
+    if (debug) this._log('S3', debugObject, 'params:', params);
     if (debug) this._log('S3', debugObject, 'Promises length:', dirContent.length);
 
     const s3Promises = [];
@@ -227,7 +233,8 @@ class EasyYandexS3 {
       const s3Promise = this.Upload({
         path: file_path,
         name: final_name,
-        save_name
+        save_name,
+        cacheControl: params.cacheControl,
       }, path.join(route, file.relativeDirPath));
       s3Promises.push(s3Promise);
     }
